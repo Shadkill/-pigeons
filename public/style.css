@@ -5,8 +5,6 @@
         flex-direction: column;
       }
       section{
-        width: 94vw;
-        height: 94vh;
         display: flex;
         justify-content: center;
         align-items: center;
