@@ -23,8 +23,8 @@
         background-color: #778BA4;
         border-radius: 1vw;
         color: #DBEBFB;
-        max-width: 400px;
-        max-height: 400px;
+        width: 400px;
+        height: 400px;
       }
       .div_input{
         display: flex;
