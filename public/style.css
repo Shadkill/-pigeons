@@ -5,7 +5,7 @@
         flex-direction: column;
       }
       section{
-        width: 98vw;
+        width: 96vw;
         height: 94vh;
         display: flex;
         justify-content: center;
@@ -73,13 +73,14 @@
           overflow-x: hidden;
         }
         h1{
-          font-size: 18px;
+          font-size: 16px;
+                text-align:center;
         }
         label{
-          font-size: 15px;
+          font-size: 13px;
         }
         form{
-          width: 250px;
+          width: 200px;
           height:300px;
           gap: 30px;
           padding: 10px;
