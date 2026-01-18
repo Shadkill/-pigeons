@@ -20,11 +20,12 @@
         flex-direction: column;
         gap: 3vw;
         padding-top: 3vw;
+        padding:10px;
         background-color: #778BA4;
         border-radius: 1vw;
         color: #DBEBFB;
-        width: 400px;
-        height: 400px;
+        max-width: 400px;
+        max-height: 400px;
       }
       .div_input{
         display: flex;
