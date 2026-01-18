@@ -23,8 +23,8 @@
         background-color: #778BA4;
         border-radius: 1vw;
         color: #DBEBFB;
-        width: 400px;
-        height: 400px;
+        max-width: 400px;
+        max-height: 400px;
       }
       .div_input{
         display: flex;
@@ -84,8 +84,8 @@
           font-size: 13px;
         }
         form{
-          width: 250px;
-          height:300px;
+          max-width: 250px;
+          max-height:300px;
           gap: 30px;
           padding: 10px;
         }
@@ -117,8 +117,8 @@
           font-size: 13px;
         }
         form{
-          width: 250px;
-          height:300px;
+          max-width: 250px;
+          max-height:300px;
           gap: 30px;
           padding: 10px;
         }
