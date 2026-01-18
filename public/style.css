@@ -5,12 +5,13 @@
         flex-direction: column;
       }
       section{
-        width: 96vw;
+        width: 94vw;
         height: 94vh;
         display: flex;
         justify-content: center;
         align-items: center;
         padding: 10px;
+              text-align:center;
       }
       form{
         display: flex;
@@ -74,7 +75,7 @@
         }
         h1{
           font-size: 16px;
-                text-align:center;
+                text-align: center;
         }
         label{
           font-size: 13px;
