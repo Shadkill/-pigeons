@@ -97,7 +97,9 @@
           font-size: 10px;
           text-align: center;
         }
-              @media screen and (min-width: 768px) and (max-width: 1080px){
+            
+      }
+  @media screen and (min-width: 768px) and (max-width: 1080px){
                       *{
           overflow-x: hidden;
         }
@@ -126,4 +128,3 @@
           text-align: center;
         }
               }
-      }
