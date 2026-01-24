@@ -1,17 +1,17 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="ru">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Декодер файлов для голубей</title>
-    <!-- Шрифты -->
+  
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
       href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300..700&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap"
       rel="stylesheet"
     />
-    <!-- Твои стили -->
+    
     <link rel="stylesheet" href="/style.css" />
   </head>
   <body>
@@ -34,4 +34,108 @@
       </div>
     </section>
   </body>
+</html> -->
+
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Декодер файлов для голубей</title>
+    <!-- Шрифты -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300..700&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <style>
+        
+    </style>
+</head>
+<body>
+    <section>
+        <div class="main">
+            <h1>Декодер файлов для голубей</h1>
+            
+            <% if (showForm) { %>
+                <!-- Форма загрузки файла -->
+                <form action="/decode" method="POST" enctype="multipart/form-data">
+                    <div class="div_input">
+                        <label>Выберите файл (.f, .txt):</label>
+                        <input type="file" name="file" accept=".f,.txt" required />
+                    </div>
+                    <button type="submit">Декодировать</button>
+                </form>
+                <p>После загрузки данные будут отображены на этой странице.</p>
+            <% } else { %>
+                <!-- Результаты декодирования -->
+                <div class="results-container">
+                    <div class="results-header">
+                        <h2>Результаты декодирования</h2>
+                        <div class="file-info">
+                            Файл: <strong><%= fileName %></strong> | 
+                            Строк данных: <strong><%= totalLines %></strong>
+                        </div>
+                    </div>
+                    
+                    <% if (header) { %>
+                        <div class="data-header">
+                            <%= header %>
+                        </div>
+                    <% } %>
+                    
+                    <% if (tableData && tableData.length > 0) { %>
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>№</th>
+                                        <th>Дата</th>
+                                        <th>Время</th>
+                                        <th>UID</th>
+                                        <th>Статус</th>
+                                        <th>Проверка CRC</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% tableData.forEach((row, index) => { %>
+                                        <tr>
+                                            
+                                            <% row.data.forEach((cell, cellIndex) => { %>
+                                                <td><%= cell %></td>
+                                            <% }); %>
+                                            <!-- Если колонок меньше 4, добавляем пустые ячейки -->
+                                            <% for (let i = row.data.length-1; i < 4; i++) { %>
+                                                <td>-</td>
+                                            <% } %>
+                                        </tr>
+                                    <% }); %>
+                                </tbody>
+                            </table>
+                        </div>
+                    <% } else { %>
+                        <div class="no-data">
+                            Нет данных для отображения
+                        </div>
+                    <% } %>
+                    
+                    <% if (errors && errors.length > 0) { %>
+                        <div class="error-container">
+                            <strong>Ошибки обработки:</strong>
+                            <% errors.forEach(err => { %>
+                                <div class="error-item">
+                                    Строка <%= err.lineNumber %>: <%= err.error %>
+                                </div>
+                            <% }); %>
+                        </div>
+                    <% } %>
+                    
+                    <button onclick="window.location.href='/'" class="back-btn">
+                        ← Загрузить другой файл
+                    </button>
+                </div>
+            <% } %>
+        </div>
+    </section>
+</body>
 </html>

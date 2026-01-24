@@ -74,9 +74,13 @@ function decodeFileContent(fileContent) {
       const swappedBase64 = swapFirst8Bytes(base64Part);
       const decodedText = decodeBase64(swappedBase64);
       const calculatedCrc = calculateCrc32(decodedText);
-      const crcValid = swappedCrc === calculatedCrc;
-      const decode = decodedText.replace(/,/g, ',   ')
-      decodedLines.push(decode);
+       const dataParts = decodedText.split(',');
+      decodedLines.push({
+        index: index + 1,
+        rawText: decodedText,
+        dataParts: dataParts,
+        crcValid: swappedCrc === calculatedCrc
+      });
     } catch (e) {
       errors.push({
         lineNumber: index + 1,
@@ -84,43 +88,122 @@ function decodeFileContent(fileContent) {
         error: e.message,
       });
     }
+      // const crcValid = swappedCrc === calculatedCrc;
+      // const decode = decodedText.replace(/,/g, ',   ')
+      // decodedLines.push(decode);
   });
   return { decodedLines, errors };
 }
 
 
 app.get('/', (req, res) => {
-  res.render('index');
+   res.render('index', { 
+    fileName: '', 
+    header: '',
+    tableData: [],
+    errors: [],
+    showForm: true,
+    totalLines: 0
+  });
 });
 
 app.post('/decode', upload.single('file'), (req, res) => {
   if (!req.file) {
-    return res.status(400).send('Файл не был загружен');
+    return res.status(400).render('index', { 
+      fileName: '', 
+      header: '',
+      tableData: [],
+      errors: [{ error: 'Файл не был загружен' }],
+      showForm: true,
+      totalLines: 0
+    });
   }
+  
   try {
     const inputText = req.file.buffer.toString('utf-8');
-    let { decodedLines } = decodeFileContent(inputText);
+    const { decodedLines, errors } = decodeFileContent(inputText);
+    
     if (decodedLines.length === 0) {
-      return res.status(400).send('Не удалось декодировать ни одной строки файла.');
+      return res.status(400).render('index', {
+        fileName: req.file.originalname,
+        header: '',
+        tableData: [],
+        errors: [{ error: 'Не удалось декодировать ни одной строки файла.' }],
+        showForm: true,
+        totalLines: 0
+      });
     }
-    let name = decodedLines[0];
-    decodedLines.shift();
-    const resultText =name+ '\n' +"№,   Date,         Time,       UID,           Status\n" + decodedLines.join('\n');
-    const fileName =
-      'decoded_' + new Date().toISOString().slice(0, 10) + '.txt';
-    res.setHeader('Content-Type', 'text/plain; charset=utf-8');
-    res.setHeader(
-      'Content-Disposition',
-      `attachment; filename="${fileName}"`
-    );
-    res.send(resultText);
+    
+    // Первая строка - заголовок
+    const headerLine = decodedLines[0];
+    let header = '';
+    let tableData = [];
+    
+    if (headerLine && headerLine.dataParts.length > 0) {
+      header = headerLine.rawText;
+      // Остальные строки - данные для таблицы
+      tableData = decodedLines.slice(1).map(line => ({
+        index: line.index - 1, // Корректируем индекс (без заголовка)
+        data: line.dataParts,
+        crcValid: line.crcValid
+      }));
+    } else {
+      // Если нет заголовка, используем все строки как данные
+      tableData = decodedLines.map(line => ({
+        index: line.index,
+        data: line.dataParts,
+        crcValid: line.crcValid
+      }));
+    }
+    
+    res.render('index', {
+      fileName: req.file.originalname,
+      header: header,
+      tableData: tableData,
+      errors: errors,
+      showForm: false,
+      totalLines: tableData.length
+    });
   } catch (e) {
     console.error(e);
-    res
-      .status(500)
-      .send('Ошибка при обработке файла: ' + (e && e.message ? e.message : e));
+    res.status(500).render('index', {
+      fileName: '',
+      header: '',
+      tableData: [],
+      errors: [{ error: 'Ошибка при обработке файла: ' + e.message }],
+      showForm: true,
+      totalLines: 0
+    });
   }
 });
+// app.post('/decode', upload.single('file'), (req, res) => {
+//   if (!req.file) {
+//     return res.status(400).send('Файл не был загружен');
+//   }
+//   try {
+//     const inputText = req.file.buffer.toString('utf-8');
+//     let { decodedLines } = decodeFileContent(inputText);
+//     if (decodedLines.length === 0) {
+//       return res.status(400).send('Не удалось декодировать ни одной строки файла.');
+//     }
+//     let name = decodedLines[0];
+//     decodedLines.shift();
+//     const resultText =name+ '\n' +"№,   Date,         Time,       UID,           Status\n" + decodedLines.join('\n');
+//     const fileName =
+//       'decoded_' + new Date().toISOString().slice(0, 10) + '.txt';
+//     res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+//     res.setHeader(
+//       'Content-Disposition',
+//       `attachment; filename="${fileName}"`
+//     );
+//     res.send(resultText);
+//   } catch (e) {
+//     console.error(e);
+//     res
+//       .status(500)
+//       .send('Ошибка при обработке файла: ' + (e && e.message ? e.message : e));
+//   }
+// });
 app.listen(PORT, () => {
   console.log(`Server run`);
 });
